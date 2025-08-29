@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Configurazione eCommerce - ProntoShop</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Configurazione eCommerce</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f4f6f8;
       padding: 2em;
     }
-    .container {
+    .box {
       max-width: 620px;
       margin: auto;
       background: #fff;
@@ -34,6 +33,10 @@
       margin-top: 1.5em;
       display: block;
     }
+    label.required::after {
+      content: " *";
+      color: red;
+    }
     input, select, textarea {
       width: 100%;
       padding: 10px;
@@ -41,6 +44,12 @@
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 1em;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-top: 0.5em;
     }
     button {
       margin-top: 2em;
@@ -55,61 +64,162 @@
     button:hover {
       background: #187bcd;
     }
-    .success {
-      display: none;
+    .msg {
       margin-top: 2em;
       text-align: center;
       font-size: 1.1em;
       color: #10b981;
+      display: none;
+    }
+    .legend {
+      margin-top: 1.5em;
+      font-size: 0.9em;
+      color: #64748b;
+      text-align: left;
+    }
+
+    /* 🔄 Spinner Modale */
+    #loadingModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    #loadingModal .spinner-box {
+      background: #fff;
+      padding: 2em;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    }
+    .spinner {
+      border: 5px solid #eee;
+      border-top: 5px solid #1e90ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin: auto;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="box">
     <h1>🎉 Grazie per esserti abbonato a ProntoShop!</h1>
-    <div class="subtitle">
-      🛍️ Ti chiediamo solo 2 minuti del tuo tempo per creare la magia del tuo nuovo e-commerce. 🚀
-    </div>
-    <form id="configForm">
-      <label for="model">1. Quale modello di sito vuoi generare?</label>
-      <select name="Model" id="model" required>
-        <option value="">Seleziona...</option>
-        <option value="Multi Purpose">Multi Purpose</option>
-        <option value="Quick Order">Quick Order</option>
-        <option value="Wholesale">Wholesale</option>
-        <option value="Digital Download">Digital Download</option>
-        <option value="List of Links">List of Links</option>
-      </select>
+    <div class="subtitle">🛍️ Ti chiediamo solo 2 minuti del tuo tempo per creare la magia del tuo nuovo e-commerce. 🚀</div>
 
-      <label for="email">2. Inserisci la tua email</label>
-      <input type="email" name="Email" id="email" required>
+    <form id="dynamicForm"></form>
 
-      <label for="note">3. Hai preferenze particolari?</label>
-      <textarea name="Note" id="note" rows="4" placeholder="Scrivi qui le tue preferenze..."></textarea>
+    <div class="legend">🔴 I campi contrassegnati con * sono obbligatori.</div>
+    <div class="msg" id="thankYouMsg">✅ I tuoi dati sono stati registrati con successo.</div>
+  </div>
 
-      <button type="submit">✅ Invia configurazione</button>
-    </form>
-
-    <div class="success" id="successMessage">
-      ✅ Configurazione inviata con successo! Ti contatteremo a breve. 💌
+  <div id="loadingModal">
+    <div class="spinner-box">
+      <div class="spinner"></div>
+      <p style="margin-top: 1em;">Invio in corso...</p>
     </div>
   </div>
 
   <script>
-    const form = document.getElementById("configForm");
-    const msg = document.getElementById("successMessage");
+    fetch("https://script.google.com/macros/s/AKfycbxRFYnIgtl0AvT_z4YTKL9L1MBPhGO5o-vigbaF8sT-RliV_K3iGXVrgCQaSInp5A_s3g/exec?getDomande=true")
+      .then(res => res.json())
+      .then(domande => renderForm(domande));
 
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const data = new FormData(form);
-      fetch("https://script.google.com/macros/s/AKfycbz_hrADHbh3Kgtq-tZldpxKYeIxhqw47tqow9wmTbwAhldxJt-rJ71yTMWLoJ5d30wvow/exec", {
-        method: "POST",
-        body: new URLSearchParams(data),
-      }).then(() => {
-        form.style.display = "none";
-        msg.style.display = "block";
-      }).catch(() => alert("Errore durante l'invio. Riprova."));
-    });
+    function renderForm(domande) {
+      const form = document.getElementById("dynamicForm");
+      const loadingModal = document.getElementById("loadingModal");
+
+      domande.forEach((q) => {
+        const label = document.createElement("label");
+        if (q.obbligatorio === "SI") label.classList.add("required");
+        label.textContent = `${q.numero}. ${q.testo}`;
+        form.appendChild(label);
+
+        const isRequired = q.obbligatorio === "SI";
+
+        if (q.tipo === "select") {
+          const select = document.createElement("select");
+          select.name = q.campo;
+          if (isRequired) select.required = true;
+
+          const defaultOption = document.createElement("option");
+          defaultOption.value = "";
+          defaultOption.textContent = "Seleziona un’opzione";
+          select.appendChild(defaultOption);
+
+          q.opzioni.forEach((opt) => {
+            const option = document.createElement("option");
+            option.value = opt;
+            option.textContent = opt;
+            select.appendChild(option);
+          });
+
+          form.appendChild(select);
+
+        } else if (q.tipo === "checkbox") {
+          const group = document.createElement("div");
+          group.className = "checkbox-group";
+
+          q.opzioni.forEach((opt) => {
+            const subLabel = document.createElement("label");
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.name = q.campo;
+            cb.value = opt;
+            subLabel.appendChild(cb);
+            subLabel.append(" " + opt);
+            group.appendChild(subLabel);
+          });
+
+          form.appendChild(group);
+
+        } else if (q.tipo === "textarea") {
+          const textarea = document.createElement("textarea");
+          textarea.name = q.campo;
+          textarea.rows = 4;
+          if (isRequired) textarea.required = true;
+          form.appendChild(textarea);
+
+        } else {
+          const input = document.createElement("input");
+          input.type = q.tipo;
+          input.name = q.campo;
+          if (isRequired) input.required = true;
+          form.appendChild(input);
+        }
+      });
+
+      const button = document.createElement("button");
+      button.textContent = "✅ Invia";
+      form.appendChild(button);
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        loadingModal.style.display = "flex";
+
+        const data = new FormData(form);
+        const params = new URLSearchParams(data);
+
+        fetch("https://script.google.com/macros/s/AKfycbxRFYnIgtl0AvT_z4YTKL9L1MBPhGO5o-vigbaF8sT-RliV_K3iGXVrgCQaSInp5A_s3g/exec", {
+          method: "POST",
+          body: params,
+        }).then(() => {
+          loadingModal.style.display = "none";
+          form.style.display = "none";
+          document.getElementById("thankYouMsg").style.display = "block";
+        });
+      });
+    }
   </script>
 </body>
 </html>
