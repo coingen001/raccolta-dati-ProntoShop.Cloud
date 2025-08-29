@@ -102,7 +102,7 @@
     form.addEventListener("submit", function(e) {
       e.preventDefault();
       const data = new FormData(form);
-      fetch("https://script.google.com/macros/s/AKfycbw4B1pHcaGbkgXdhk9_WFZtOFpeG4p3fTWDiXVFcjUjZ2Fd0UBpEUzRg-BM_WK2mrQGyw/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbz_hrADHbh3Kgtq-tZldpxKYeIxhqw47tqow9wmTbwAhldxJt-rJ71yTMWLoJ5d30wvow/exec", {
         method: "POST",
         body: new URLSearchParams(data),
       }).then(() => {
