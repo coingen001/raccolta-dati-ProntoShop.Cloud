@@ -10,6 +10,5 @@ git commit -m "Aggiornamento automatico da batch"
 git push
 
 echo ---------------------------------------
-echo ✅ Deploy avviato. Attendi 10 secondi.
+echo ✅ Deploy inviato con successo!
 echo ---------------------------------------
-pause
