@@ -77,7 +77,6 @@
       color: #64748b;
       text-align: left;
     }
-
     /* 🔄 Spinner Modale */
     #loadingModal {
       display: none;
@@ -118,7 +117,6 @@
     <div class="subtitle">🛍️ Ti chiediamo solo 2 minuti del tuo tempo per creare la magia del tuo nuovo e-commerce. 🚀</div>
 
     <form id="dynamicForm"></form>
-
     <div class="legend">🔴 I campi contrassegnati con * sono obbligatori.</div>
     <div class="msg" id="thankYouMsg">✅ I tuoi dati sono stati registrati con successo.</div>
   </div>
@@ -131,7 +129,7 @@
   </div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzXqRoAsAwhGz1nggEMWnM3vIuCpm8dUfJzLgtFlMM6s95IlpAND2col2prQJgI7JzKgw/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwJd9iNIVWXZCshWx4Szux1fzQBq-8kt_hlTqNIgJNB72EUL6oC20S4Y2P9KFjAsV5Dzg/exec";
 
     fetch(scriptURL + "?getDomande=true")
       .then(res => res.json())
@@ -219,6 +217,9 @@
           loadingModal.style.display = "none";
           form.style.display = "none";
           document.getElementById("thankYouMsg").style.display = "block";
+        }).catch(() => {
+          loadingModal.style.display = "none";
+          alert("Errore durante l’invio. Riprova.");
         });
       });
     }
