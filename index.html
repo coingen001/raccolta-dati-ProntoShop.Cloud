@@ -119,7 +119,7 @@
 
     <form id="dynamicForm"></form>
 
-    <div class="legend">🔴 I campi contrassegnati con <strong>*</strong> sono obbligatori.</div>
+    <div class="legend">🔴 I campi contrassegnati con * sono obbligatori.</div>
     <div class="msg" id="thankYouMsg">✅ I tuoi dati sono stati registrati con successo.</div>
   </div>
 
@@ -131,9 +131,9 @@
   </div>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbzzxDdpwiTEUdjogfS_JrhtdlKEUrxEt_UZ6haAU8VPcn9BElPHiFMNlyx7o8Wz8VBpBg/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzXqRoAsAwhGz1nggEMWnM3vIuCpm8dUfJzLgtFlMM6s95IlpAND2col2prQJgI7JzKgw/exec";
 
-    fetch(`${scriptUrl}?getDomande=true`)
+    fetch(scriptURL + "?getDomande=true")
       .then(res => res.json())
       .then(domande => renderForm(domande));
 
@@ -143,10 +143,11 @@
 
       domande.forEach((q) => {
         const label = document.createElement("label");
-        const isRequired = q.obbligatorio === "SI";
-        if (isRequired) label.classList.add("required");
+        if (q.obbligatorio === "SI") label.classList.add("required");
         label.textContent = `${q.numero}. ${q.testo}`;
         form.appendChild(label);
+
+        const isRequired = q.obbligatorio === "SI";
 
         if (q.tipo === "select") {
           const select = document.createElement("select");
@@ -211,7 +212,7 @@
         const data = new FormData(form);
         const params = new URLSearchParams(data);
 
-        fetch(scriptUrl, {
+        fetch(scriptURL, {
           method: "POST",
           body: params,
         }).then(() => {
