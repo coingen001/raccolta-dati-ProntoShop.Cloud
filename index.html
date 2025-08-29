@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurazione eCommerce - ProntoShop</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      padding: 2em;
+    }
+    .container {
+      max-width: 620px;
+      margin: auto;
+      background: #fff;
+      padding: 2.5em;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+    h1 {
+      color: #1e3a8a;
+      text-align: center;
+      font-size: 1.8em;
+    }
+    .subtitle {
+      text-align: center;
+      margin-bottom: 2em;
+      color: #334155;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 1.5em;
+      display: block;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 0.5em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 2em;
+      padding: 14px;
+      background: #1e90ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #187bcd;
+    }
+    .success {
+      display: none;
+      margin-top: 2em;
+      text-align: center;
+      font-size: 1.1em;
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎉 Grazie per esserti abbonato a ProntoShop!</h1>
+    <div class="subtitle">
+      🛍️ Ti chiediamo solo 2 minuti del tuo tempo per creare la magia del tuo nuovo e-commerce. 🚀
+    </div>
+    <form id="configForm">
+      <label for="model">1. Quale modello di sito vuoi generare?</label>
+      <select name="Model" id="model" required>
+        <option value="">Seleziona...</option>
+        <option value="Multi Purpose">Multi Purpose</option>
+        <option value="Quick Order">Quick Order</option>
+        <option value="Wholesale">Wholesale</option>
+        <option value="Digital Download">Digital Download</option>
+        <option value="List of Links">List of Links</option>
+      </select>
+
+      <label for="email">2. Inserisci la tua email</label>
+      <input type="email" name="Email" id="email" required>
+
+      <label for="note">3. Hai preferenze particolari?</label>
+      <textarea name="Note" id="note" rows="4" placeholder="Scrivi qui le tue preferenze..."></textarea>
+
+      <button type="submit">✅ Invia configurazione</button>
+    </form>
+
+    <div class="success" id="successMessage">
+      ✅ Configurazione inviata con successo! Ti contatteremo a breve. 💌
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("configForm");
+    const msg = document.getElementById("successMessage");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = new FormData(form);
+      fetch("https://script.google.com/macros/s/AKfycby_KvQXGCkQvdVvV_HmpV99YmhZPgYGqlYuLhi4_iFuxBxk2FaxOtFdUNDsot4x_jaUzQ/exec", {
+        method: "POST",
+        body: new URLSearchParams(data),
+      }).then(() => {
+        form.style.display = "none";
+        msg.style.display = "block";
+      }).catch(() => alert("Errore durante l'invio. Riprova."));
+    });
+  </script>
+</body>
+</html>
